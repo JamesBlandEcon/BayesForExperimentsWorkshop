@@ -119,3 +119,73 @@ if (!file.exists(file)) {
   
   Estimates |> write.csv(file)
 }
+
+
+# USING ALL OF THE DATA IN ONE GO
+
+MODELS<-c("SFEMhomogeneous_pooled","SFEMhomogeneous_treatment","SFEMhomogeneous_strategy",
+  "SFEMheterogeneous_pooled","SFEMheterogeneous_treatment","SFEMheterogeneous_strategy")
+library(bridgesampling)
+library(mnorm)
+
+set.seed(42)
+
+bs<-list()
+
+for (mm in MODELS) {
+  
+  file<-paste0("Presentation/SFEM/Estimates_",mm,".rds")
+    
+    print(paste("estimating",mm))
+    
+    model <-paste0("Presentation/SFEM/",mm,".stan") |>
+      stan_model()
+    
+    d = list(
+      
+      N=dim(AggData)[1],
+      S=6,
+      y = AggData |> select(follow1:follow6),
+      n = AggData |> select(n) |> as.vector() |> unlist(),
+      
+      nTreatments = 6,
+      treatmentID = AggData$Treatment,
+      
+      prior_mix = priorMix,
+      prior_mu = c(0,1),
+      prior_tau = 0.05,
+      prior_gamma = c(1,1),
+      
+      nz = 100,
+      z = halton(100)[,1] |> qnorm() |> as_vector()
+      
+    )
+    
+    if (mm=="SFEMheterogeneous_strategy") {
+      
+      Fit<- model |> 
+        sampling(data=d,seed=42,
+                 control = list(adapt_delta = 0.999),
+                 iter = 4000
+                 )
+      
+    } else {
+      Fit<- model |> 
+        sampling(data=d,seed=42)
+    }
+    
+    
+    
+    bs[[mm]]<-bridge_sampler(Fit)
+    
+    Fit |>
+      saveRDS(file)
+    
+    
+  
+}
+
+bs |> saveRDS("Presentation/SFEM/logml.rds")
+
+
+
