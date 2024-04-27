@@ -1,4 +1,4 @@
-# Bayes For Experiments Workshop
+# Structural Bayesian Techniques for Experimental and Behavioral Economics workshop
 
 You will need a folder called "data" in this directory's parent directory to get the code to run.
 You can download the data from the following locations:
