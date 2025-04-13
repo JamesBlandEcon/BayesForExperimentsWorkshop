@@ -1,0 +1,31 @@
+---
+title: "Calculations for SFEM"
+author: "James R Bland"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Likelihood with truncated Beta errors
+
+Let the trembles be truncated beta, so:
+
+$$
+p(\gamma\mid a,b)\propto\gamma^{a-1}(1-\gamma)^{b-1} I(\gamma\in(0,0.5))
+$$
+
+$$
+\begin{aligned}
+p(y_i\mid \tau)&=\int_0^{0.5}(1-\gamma)^{y_{i,\tau}}\gamma^{n_i-y_{i,\tau}} p(\gamma\mid a,b)\mathrm d\gamma\\
+&=\frac{\int_0^{0.5}(1-\gamma)^{y_{i,\tau}}\gamma^{n_i-y_{i,\tau}} \gamma^{a-1}(1-\gamma)^{b-1} \mathrm d\gamma}{\int_0^{0.5} \gamma^{a-1}(1-\gamma)^{b-1}\mathrm d\gamma}\\
+&=\frac{\int_0^{0.5}\gamma^{n_i-y_i+a-1}(1-\gamma)^{y_i+b-1}\mathrm d\gamma}{\int_0^{0.5} \gamma^{a-1}(1-\gamma)^{b-1}\mathrm d\gamma}\\
+&=\frac{B(0.5;n_i-y_i+a,y_i+b)}{B(0.5;a,b)}
+\end{aligned}
+$$
+
+where $B(x;a,b)$ is the incomplete, unnormalized Beta function. 
+
+Stan's `inc_beta` gives us the *regularized* incomplete beta function, which divides by $B(a,b)$, so we need to multiply through by this (or add it to the logs)
