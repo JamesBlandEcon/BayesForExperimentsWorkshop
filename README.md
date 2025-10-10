@@ -1,3 +1,3 @@
 # Structural Bayesian Techniques for Experimental and Behavioral Economics workshop
 
-This is the material used for the workshop at OSU on 2025-04-16
+This repository contains material for my structural Bayseian econometrics workshop based on my book: https://jamesblandecon.github.io/StructuralBayesianTechniques/section.html
