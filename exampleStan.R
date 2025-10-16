@@ -14,7 +14,6 @@ model<-"Presentation/exampleStan.stan" |>
   stan_model()
 
 # Set up the data to pass to Stan
-
 d<-list(
   N = length(y),
   y = y,
