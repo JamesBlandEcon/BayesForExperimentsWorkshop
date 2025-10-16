@@ -4709,6 +4709,10 @@ model {
 
 <p><code>generated quantities</code>: Calculate functions of parameters and data that cannot be used in the <code>model</code> block (fast)</p>
 
+</article></slide><slide class=""><hgroup><h2>Running <em>Stan</em> in <em>R</em></h2></hgroup><article  id="running-stan-in-r">
+
+<p>See <code>exampleStan.R</code> and <code>exampleStan.stan</code></p>
+
 </article></slide><slide class=""><hgroup><h2>Some other things to know about <em>Stan</em></h2></hgroup><article  id="some-other-things-to-know-about-stan">
 
 <p>Diagnostics:</p>
@@ -5476,6 +5480,25 @@ lp__
 
 <p><strong>Joint estimation</strong> of \(\{\mu,\Sigma\}\) and \(\{\theta_i\}_{i=1}^N\)</p>
 
+</article></slide><slide class=""><hgroup><h2>Joint estimation?</h2></hgroup><article  id="joint-estimation">
+
+<p>\[
+\theta_i\doteq\begin{pmatrix}
+\alpha_i\\ \beta_i \\ \log\lambda_i
+\end{pmatrix}\sim iidN(\mu,\Sigma)
+\]</p>
+
+<p>Estimate individual-level parameters \(\{\theta_i\}_{i=1}^N\) alongside population-level parameter \(\mu\) and \(\Sigma\)</p>
+
+<p>\[
+\begin{aligned}
+p(\theta,\mu,\Sigma \mid y)&amp;\propto p(y\mid\theta,\mu,\Sigma)p(\theta,\mu,\Sigma)\\
+&amp;=\underbrace{p(y\mid \theta)}_{\text{likelihood}}\overbrace{p(\theta\mid \mu,\Sigma)}^\text{prior}\underbrace{p(\mu,\Sigma)}_\text{hyper-prior}
+\end{aligned}
+\]</p>
+
+<p><strong>Likelihood:</strong> Same as individual-level estimation!</p>
+
 <!--
 ## Compared to maximum simulated maximum likelihood estimation
 
@@ -5540,6 +5563,33 @@ $$
 </article></slide><slide class=""><hgroup><h2>Estimating the model in <em>Stan</em></h2></hgroup><article  id="estimating-the-model-in-stan">
 
 <p>(see <code>Hierarchical_BFS2019_correlated.stan</code>)</p>
+
+<p>Things to note:</p>
+
+<ul>
+<li>Likelihood calculation is exactly the same as in individual-level estimation</li>
+<li>Joint estimation of individual-level parameters</li>
+</ul>
+
+<p>Here I follow the recommendations of <a href='https://mc-stan.org/docs/stan-users-guide/regression.html#multivariate-hierarchical-priors.section' title=''>https://mc-stan.org/docs/stan-users-guide/regression.html#multivariate-hierarchical-priors.section</a></p>
+
+<ul>
+<li>Decomposition of \(\Sigma\) into standard deviations \(\tau\) and correlation matrix \(\Omega\)</li>
+<li>Cholesky factorization of \(\Omega\)</li>
+<li>Non-central parameterization of individual-level parameters</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Things we can do with a hierarchical model</h2></hgroup><article  id="things-we-can-do-with-a-hierarchical-model">
+
+<ol>
+<li>Comment on the estimates of <strong>central tendency</strong> \(\mu\) (&ldquo;representative agent&rdquo;)</li>
+<li>Comment on estimates of <strong>spread</strong> \(\Sigma\)</li>
+<li>Estimate individual-level parameters with a prior <strong>informed by the entire dataset</strong>
+
+<ul>
+<li>Anything we can do with individual-level estimates we can also do with a hierarchical model!</li>
+</ul></li>
+</ol>
 
 </article></slide><slide class=""><hgroup><h2>Population-level estimates</h2></hgroup><article  id="population-level-estimates">
 
